@@ -82,7 +82,7 @@ def Summary(tradesim1, nickname=None):
 	
 	# 连续权益上涨天数 最大值、均值、标准差，连续权益下跌天数 最大值、均值、标准差
 	maxConBDWin_Day, avgConBDWin_Day, stdConBDWin_Day, maxConBDLoss_Day, avgConBDLoss_Day, stdConBDLoss_Day = ConWithDrawOrRise(
-		BDarrBalance)
+			BDarrBalance)
 	
 	# R2，交易次数
 	R2 = AboutR2(tradesim1.arrTL3R2Return, tradesim1.arrTL3Pos, OpenTradeCount)
@@ -129,7 +129,7 @@ def Summary(tradesim1, nickname=None):
 	listSummaryValue[37] = '{:.4f}'.format(PMD2b(listSummaryValue[1], WithDraw_Times, TradeTimeFrame, BDarrBalance,
 	                                             AvgWithDraw + 2 * StdWithDraw))  # P/MD2b，str
 	listSummaryValue[38] = '{:.4f}'.format(
-		PMD(listSummaryValue[1], listSummaryValue[2], TradeTimeFrame, maxWithDraw))  # P/MD，str
+			PMD(listSummaryValue[1], listSummaryValue[2], TradeTimeFrame, maxWithDraw))  # P/MD，str
 	listSummaryValue[45] = '%.4f%%' % (avgMargin * 100)  # 持仓均值，从权益表Day中取，str%
 	listSummaryValue[46] = '%.4f%%' % (stdMargin * 100)  # 持仓标准差，从权益表Day中取，str%
 	listSummaryValue[48] = maxConBDLoss_Day  # 连续回撤天数_最大值，int
@@ -139,7 +139,7 @@ def Summary(tradesim1, nickname=None):
 	listSummaryValue[59] = '{:.4f}'.format(AvgHold)  # 平均持仓，str
 	
 	Time1 = datetime.datetime.now()
-	print(u'Summary计算用时：', Time1 - Time2)
+	# print(u'Summary计算用时：', Time1 - Time2)
 	
 	tem_df = pd.DataFrame(listSummary)
 	tem_df[1] = listSummaryValue
@@ -160,7 +160,9 @@ def Summary(tradesim1, nickname=None):
 	summary2csv(tradesim1, Summary_df, Balance_df, BalanceDay_df, WithDraw_df, ItemSummary_df)
 	
 	Time2 = datetime.datetime.now()
-	print(u'保存csv', Time2 - Time1)
+
+
+# print(u'保存csv', Time2 - Time1)
 
 
 # 权益表转权益表Day
@@ -233,7 +235,7 @@ def ToBalanceDay(arrDate, arrBalance, arrTotalMargin, arrTotalNetMargin, arrWith
 				WDlistWithDrawLen.append(TimeDelta.total_seconds() / 86400)  # 秒数，转成天数，一天86400秒
 	
 	return BDarrDate, BDarrBalance, BDarrTotalMargin, BDarrTotalNetMargin, BDarrWithDraw, BDarrDisTop, WDlistWithDraw, WDlistWithDrawLen, len(
-		BDarrDate)
+			BDarrDate)
 
 
 # 计算回撤的均值和标准差，每次回撤记为1次
@@ -349,9 +351,9 @@ def AboutWinAndLoss(arrTL3Pos, arrTL3Return0, arrTL3Signal, arrTL3OpenBalance):
 			LossTrade.append(tem)
 		if tem > 0:  # 若大于0
 			WinTrade.append(tem)
-		if len(LossTrade)==0:
+		if len(LossTrade) == 0:
 			LossTrade.append(tem)
-		if len(WinTrade)==0:
+		if len(WinTrade) == 0:
 			WinTrade.append(tem)
 	return np.max(WinTrade), np.average(WinTrade), np.min(LossTrade), np.average(LossTrade)
 
@@ -373,9 +375,9 @@ def ConWithDrawOrRise(BDarrBalance):
 			Loss += 1  # 连续下跌天数+1
 			WinList.append(Win)  # 连续上涨天数结束，保存
 			Win = 0  # 连续上涨天数清0
-		if len(WinList)==0:
+		if len(WinList) == 0:
 			WinList.append(Win)
-		if len(LossList)==0:
+		if len(LossList) == 0:
 			LossList.append(Loss)
 	return np.max(WinList), np.average(WinList), np.std(WinList), np.max(LossList), np.average(LossList), np.std(
 			LossList)

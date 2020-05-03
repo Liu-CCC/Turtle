@@ -102,7 +102,7 @@ def SearchDate(arr, rRow, Time):
 class classTradeSim(object):
 	
 	# 初始化
-	def __init__(self, TradeList,tradelistfile):
+	def __init__(self, TradeList, tradelistfile):
 		# 传入参数：结算设置文件地址
 		# ==========================读取结算设置文件中的信息==========================
 		# SetupSheet = pd.read_excel(SetupFile, EXCEL_SETUPSHEET, index_col=0)  # df型，设置页，A列为索引，第1行为表头
@@ -138,7 +138,7 @@ class classTradeSim(object):
 		self.TradeSheet = TradeList  # df型，交易列表页
 		Time2 = datetime.datetime.now()
 		#		print(self.TradeListFile)
-		print(u'读取交易列表，用时：', Time2 - Time1)
+		# print(u'读取交易列表，用时：', Time2 - Time1)
 		
 		# 交易列表行列
 		self.MaxRow = len(self.TradeSheet.index)  # int型，交易列表页最大行
@@ -162,7 +162,7 @@ class classTradeSim(object):
 		Time1 = datetime.datetime.now()
 		self.CreateTradeList3()  # 交易列表3，新格式的交易列表
 		Time2 = datetime.datetime.now()
-		print(u'转交易列表3。用时：', Time2 - Time1)
+		# print(u'转交易列表3。用时：', Time2 - Time1)
 		
 		self.arrTL3No = self.TradeList3[TRDLIST_NO].values  # 交易编号
 		self.arrTL3Time = self.TradeList3[TRDLIST_TIME].values.astype(np.int64)  # 时间
@@ -397,7 +397,7 @@ class classTradeSim(object):
 		elif Signal == 'sell' or Signal == 'cover':  # 平仓，计手续费、计价差
 			# 判断 如果平仓日期 = 开仓日期，则平仓部分的手续费按平今手续费计算
 			# (成交合约张数 * 合约面值 / 成交均价) * 费率
-			ConFee = MultiConFee * (Fee * (TPH * (1/Price + 1/OpenPrice)) * abs(Pos))  # 手续费=手续费倍数*（手续费*手数）
+			ConFee = MultiConFee * (Fee * (TPH * (1 / Price + 1 / OpenPrice)) * abs(Pos))  # 手续费=手续费倍数*（手续费*手数）
 			# print(ConFee, MultiConFee ,Fee, Price, OpenPrice, abs(Pos))
 			iSpreadNumFee = iSpreadNum * MinMove * TPH * abs(Pos)  # 价差费用=价差*MinMove*TPH*手数
 			# （1/持仓均价 - 1/平仓成交均价）* 平多仓合约张数 * 合约面值
@@ -484,7 +484,10 @@ class classTradeSim(object):
 
 
 def get_data_from_DB():
-	h5 = pd.read_hdf(config.h5_address, config.symbol)
+	# h5 = pd.read_hdf(config.h5_address, config.symbol)
+	myh5 = pd.HDFStore(config.h5_address)
+	h5 = myh5[config.symbol]
+	myh5.close()
 	return h5
 
 
@@ -494,7 +497,7 @@ def TradeSimMain(h5, TradeList, tradelistfile):
 	tradesim1 = classTradeSim(TradeList, tradelistfile)  # obj型，tradesim1 = TradeSim对象,这对象只有1个。
 	Time3 = datetime.datetime.now()  # debug
 	Time2 = datetime.datetime.now()
-	print(u'读取H5数据。用时：', Time2 - Time3)
+	# print(u'读取H5数据。用时：', Time2 - Time3)
 	
 	# ========================合约========================================
 	# 建立"品种"的对象数组，如BTC, ETH
@@ -504,7 +507,7 @@ def TradeSimMain(h5, TradeList, tradelistfile):
 		Name = tradesim1.arrItemName[x]
 		dictItem[Name] = classItem(tradesim1, Name, h5)  # value值是obj
 	Time3 = datetime.datetime.now()
-	print(u'建立Item，读数据。用时：', Time3 - Time2)
+	# print(u'建立Item，读数据。用时：', Time3 - Time2)
 	
 	# =========================策略+周期==================================
 	# 建立"周期+策略"的对象数组，如TG1H, X15M
@@ -533,7 +536,7 @@ def TradeSimMain(h5, TradeList, tradelistfile):
 	for x in range(len(objITSList)):
 		tradesim1.InsertITStoTradeList3(objITSList[x])
 	Time2 = datetime.datetime.now()
-	print(u'初始化完成。用时：', Time2 - Time1)
+	# print(u'初始化完成。用时：', Time2 - Time1)
 	
 	rRowTrade = 0  # 标记位置，用于主循环中读取交易列表3的各个交易
 	
@@ -570,11 +573,13 @@ def TradeSimMain(h5, TradeList, tradelistfile):
 		tradesim1.Total(Time)  # 计算当前周期的持仓比例等
 	
 	Time3 = datetime.datetime.now()
-	print(u'结算主体完成。用时：', Time3 - Time2)
+	# print(u'结算主体完成。用时：', Time3 - Time2)
 	Summary(tradesim1, u'汇总')
 	Time2 = datetime.datetime.now()
-	print(u'Summary汇总完成。用时：', Time2 - Time3)
-	print(u'结算全部完成。用时：', Time2 - Time1)
+
+
+# print(u'Summary汇总完成。用时：', Time2 - Time3)
+# print(u'结算全部完成。用时：', Time2 - Time1)
 
 
 if __name__ == '__main__':

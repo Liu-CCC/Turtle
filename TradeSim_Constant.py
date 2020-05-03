@@ -179,4 +179,3 @@ TRDLIST_AVGMARGINWIN = u'盈利交易平均持仓'
 TRDLIST_PMD = u'P/MD'
 TRDLIST_AVGMARGIN = u'持仓均值'
 TRDLIST_AVGHOLD = u'平均持仓'
-    
